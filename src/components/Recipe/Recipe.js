@@ -88,9 +88,9 @@ export class Recipe extends Component {
 
 Recipe.propTypes = {
   item: PropTypes.shape({
-    id: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    time: PropTypes.string.isRequired,
+    time: PropTypes.number.isRequired,
     servings: PropTypes.number.isRequired,
     calories: PropTypes.number.isRequired,
     image: PropTypes.string.isRequired,

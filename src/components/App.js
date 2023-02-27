@@ -7,8 +7,24 @@ import { RecipeForm } from './RecipeForm/RecipeForm';
 
 export class App extends Component {
   state = {
-    recipes: initialRecipes,
+    recipes: [],
   };
+
+  componentDidMount() {
+    const savedRecipes = localStorage.getItem('recipes');
+    if (savedRecipes !== null) {
+      const parsedRecipes = JSON.parse(savedRecipes);
+      this.setState({ recipes: parsedRecipes });
+      return;
+    }
+    this.setState({ recipes: initialRecipes });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.recipes !== this.state.recipes) {
+      localStorage.setItem('recipes', JSON.stringify(this.state.recipes));
+    }
+  }
 
   addRecipe = newRecipe => {
     this.setState(prevState => {

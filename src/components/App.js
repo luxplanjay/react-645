@@ -1,54 +1,39 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { RecipeList } from './RecipeList/RecipeList';
 import { GlobalStyle } from './GlobalStyle';
 import { Layout } from './Layout/Layout';
 import initialRecipes from '../recipes.json';
 import { RecipeForm } from './RecipeForm/RecipeForm';
 
-export class App extends Component {
-  state = {
-    recipes: [],
+const getInitialRecipes = () => {
+  const savedRecipes = localStorage.getItem('recipes');
+  if (savedRecipes !== null) {
+    const parsedRecipes = JSON.parse(savedRecipes);
+    return parsedRecipes;
+  }
+  return initialRecipes;
+};
+
+export const App = () => {
+  const [recipes, setRecipes] = useState(getInitialRecipes);
+
+  useEffect(() => {
+    localStorage.setItem('recipes', JSON.stringify(recipes));
+  }, [recipes]);
+
+  const addRecipe = newRecipe => {
+    setRecipes(prevState => [...prevState.recipes, newRecipe]);
   };
 
-  componentDidMount() {
-    const savedRecipes = localStorage.getItem('recipes');
-    if (savedRecipes !== null) {
-      const parsedRecipes = JSON.parse(savedRecipes);
-      this.setState({ recipes: parsedRecipes });
-      return;
-    }
-    this.setState({ recipes: initialRecipes });
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.recipes !== this.state.recipes) {
-      localStorage.setItem('recipes', JSON.stringify(this.state.recipes));
-    }
-  }
-
-  addRecipe = newRecipe => {
-    this.setState(prevState => {
-      return {
-        recipes: [...prevState.recipes, newRecipe],
-      };
-    });
+  const deleteRecipe = recipeId => {
+    setRecipes(prevState => prevState.filter(recipe => recipe.id !== recipeId));
   };
 
-  deleteRecipe = recipeId => {
-    this.setState(prevState => {
-      return {
-        recipes: prevState.recipes.filter(recipe => recipe.id !== recipeId),
-      };
-    });
-  };
-
-  render() {
-    return (
-      <Layout>
-        <RecipeForm onSave={this.addRecipe} />
-        <RecipeList items={this.state.recipes} onDelete={this.deleteRecipe} />
-        <GlobalStyle />
-      </Layout>
-    );
-  }
-}
+  return (
+    <Layout>
+      <RecipeForm onSave={addRecipe} />
+      <RecipeList items={recipes} onDelete={deleteRecipe} />
+      <GlobalStyle />
+    </Layout>
+  );
+};

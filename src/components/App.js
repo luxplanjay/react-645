@@ -1,37 +1,22 @@
-import { useState } from 'react';
-import { BreedSelect } from './BreedSelect';
+import { Route, Routes } from 'react-router-dom';
+import Home from 'pages/Home';
+import Dogs from 'pages/Dogs';
+import DogDetails from 'pages/DogDetails';
 import { Layout } from './Layout';
-import { fetchDogByBreed } from '../api';
-import { Dog } from './Dog';
-import { DogSkeleton } from './DogSkeleton';
-import { ErrorMessage } from './ErrorMessage';
+import { Gallery } from './Gallery';
+import { SubBreeds } from './SubBreeds';
 
 export const App = () => {
-  const [dog, setDog] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const fetchDog = async breedId => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const dog = await fetchDogByBreed(breedId);
-      setDog(dog);
-    } catch (error) {
-      setError(
-        'У нас не получилось взять данные о собачке, попробуйте еще разочек 😇'
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <Layout>
-      <BreedSelect onSelect={fetchDog} />
-      {error && <ErrorMessage>{error}</ErrorMessage>}
-      {isLoading && <DogSkeleton />}
-      {dog && !isLoading && <Dog dog={dog} />}
-    </Layout>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="dogs" element={<Dogs />} />
+        <Route path="dogs/:dogId" element={<DogDetails />}>
+          <Route path="subbreeds" element={<SubBreeds />} />
+          <Route path="gallery" element={<Gallery />} />
+        </Route>
+      </Route>
+    </Routes>
   );
 };

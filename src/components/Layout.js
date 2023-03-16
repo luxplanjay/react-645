@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -8,10 +9,6 @@ const StyledLink = styled(NavLink)`
     color: orangered;
   }
 `;
-
-// localhost:3000/
-//localhost:3000/dogs
-//localhost:3000/dogs/dog-5
 
 export const Layout = () => {
   return (
@@ -27,7 +24,9 @@ export const Layout = () => {
         </ul>
       </header>
       <main>
-        <Outlet />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Outlet />
+        </Suspense>
       </main>
     </>
   );
